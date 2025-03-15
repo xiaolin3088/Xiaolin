@@ -92,7 +92,7 @@ function sendMessage() {
     }
 
     const apiKey = 'sk-a42b4e9eb7be4221a00075a12a6345e1';
-    const endpoint = 'https://api.deepseek.com/chat/completions';
+    const endpoint = 'https://api.deepseek.com';
 
     const payload = {
         model: "deepseek-chat",
