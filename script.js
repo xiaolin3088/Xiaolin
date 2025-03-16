@@ -92,7 +92,7 @@ function sendMessage() {
     }
 
     const apiKey = 'sk-a42b4e9eb7be4221a00075a12a6345e1';
-    const endpoint = 'https://api.deepseek.com';
+    const endpoint = 'https://api.deepseek.com/chat/completions';
 
     const payload = {
         model: "deepseek-chat",
@@ -130,7 +130,7 @@ function sendMessage() {
             loadingElement.style.display = 'none';
         }
 
-        displayMessage('bot', '出错了，请稍后再试。');
+        displayMessage('bot', '服务器繁忙，请稍后再试。');
         console.error('Error:', error);
     });
 }
