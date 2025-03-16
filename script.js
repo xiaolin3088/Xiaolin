@@ -121,7 +121,7 @@ function sendMessage() {
         if (data.choices && data.choices.length > 0) {
             displayMessage('bot', data.choices[0].message.content);
         } else {
-            displayMessage('bot', '出错了，请稍后再试。');
+            displayMessage('bot', '服务器繁忙或正在修理中，请稍后重试');
         }
     })
     .catch(error => {
