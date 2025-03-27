@@ -47,7 +47,7 @@ async function loadFromGitHub() {
 }
 
 async function getFileSHA() {
-    const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+    const url = `https://api.github.com/repos/${xiaolin3088}/${Xiaolin}/contents/${darksuper.txt}`;
     const response = await fetch(url, {
         headers: {
             'Authorization': `token ${token}`
