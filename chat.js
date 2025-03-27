@@ -31,7 +31,7 @@ async function saveToGitHub() {
 }
 
 async function loadFromGitHub() {
-    const url = `https://api.github.com/repos/${xiaolin3088}/${Xiaolin}/contents/${darksuper.txt}`;
+    const url = `https://api.github.com/repos/${xiaolin3088}/${Xiaolin}/contents/${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}`;
     const response = await fetch(url, {
         headers: {
             'Authorization': `token ${token}`
@@ -47,7 +47,7 @@ async function loadFromGitHub() {
 }
 
 async function getFileSHA() {
-    const url = `https://api.github.com/repos/${xiaolin3088}/${Xiaolin}/contents/${darksuper.txt}`;
+    const url = `https://api.github.com/repos/${xiaolin3088}/${Xiaolin}/contents/${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}`;
     const response = await fetch(url, {
         headers: {
             'Authorization': `token ${token}`
