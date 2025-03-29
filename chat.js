@@ -5,7 +5,7 @@ const loadButton = document.getElementById('load');
 const repoOwner = 'xiaolin3088';
 const repoName = 'Xiaolin';
 const filePath = 'darksuper.txt'; // 保存文本的文件路径
-const token = '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'; // 请妥善保管你的令牌
+const token = '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'; // 请妥善保管你的令牌
 
 async function saveToGitHub() {
     const content = editor.value;
@@ -13,7 +13,7 @@ async function saveToGitHub() {
     const response = await fetch(url, {
         method: 'PUT',
         headers: {
-            'Authorization': `token ${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}`,
+            'Authorization': `token ${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}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -34,7 +34,7 @@ async function loadFromGitHub() {
     const url = `https://api.github.com/repos/${xiaolin3088}/${Xiaolin}/contents/${darksuper.txt}`;
     const response = await fetch(url, {
         headers: {
-            'Authorization': `token ${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}`
+            'Authorization': `token ${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}`
         }
     });
 
@@ -50,7 +50,7 @@ async function getFileSHA() {
     const url = `https://api.github.com/repos/${xiaolin3088}/${Xiaolin}/contents/${darksuper.txt}`;
     const response = await fetch(url, {
         headers: {
-            'Authorization': `token ${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}`
+            'Authorization': `token ${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}`
         }
     });
 
