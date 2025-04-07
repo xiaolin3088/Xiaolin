@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>吊脚楼3D模型</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        // 初始化场景
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // 添加控制器
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        camera.position.set(10, 15, 20);
+        controls.update();
+
+        // 添加环境光
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        // 添加平行光
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(5, 10, 5);
+        directionalLight.castShadow = true;
+        scene.add(directionalLight);
+
+        // 创建地面
+        const groundGeometry = new THREE.PlaneGeometry(30, 30);
+        const groundMaterial = new THREE.MeshPhongMaterial({
+            color: 0x88aa88,
+            side: THREE.DoubleSide
+        });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        // 创建支撑柱
+        function createPillar(height) {
+            const geometry = new THREE.CylinderGeometry(0.3, 0.3, height, 8);
+            const material = new THREE.MeshPhongMaterial({ 
+                color: 0x996633,
+                map: new THREE.TextureLoader().load('https://threejsfundamentals.org/threejs/resources/images/wood-512x512.png')
+            });
+            const pillar = new THREE.Mesh(geometry, material);
+            pillar.castShadow = true;
+            return pillar;
+        }
+
+        // 创建平台
+        const platformGeometry = new THREE.BoxGeometry(8, 0.5, 6);
+        const platformMaterial = new THREE.MeshPhongMaterial({ 
+            color: 0x886622,
+            map: new THREE.TextureLoader().load('https://threejsfundamentals.org/threejs/resources/images/wood-512x512.png')
+        });
+        const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+        platform.position.y = 3;
+        platform.castShadow = true;
+        scene.add(platform);
+
+        // 添加支撑柱
+        const pillars = [];
+        const positions = [
+            [-3.5, 0, -2.5], [3.5, 0, -2.5],
+            [-3.5, 0, 2.5], [3.5, 0, 2.5]
+        ];
+        
+        positions.forEach(pos => {
+            const pillar = createPillar(3);
+            pillar.position.set(pos[0], 1.5, pos[2]);
+            scene.add(pillar);
+        });
+
+        // 创建主体建筑
+        const houseGeometry = new THREE.BoxGeometry(6, 4, 4);
+        const houseMaterial = new THREE.MeshPhongMaterial({ 
+            color: 0xaa8866,
+            map: new THREE.TextureLoader().load('https://threejsfundamentals.org/threejs/resources/images/wood-512x512.png')
+        });
+        const house = new THREE.Mesh(houseGeometry, houseMaterial);
+        house.position.y = 5.5;
+        house.castShadow = true;
+        scene.add(house);
+
+        // 创建屋顶
+        const roofGeometry = new THREE.ConeGeometry(4, 3, 4);
+        const roofMaterial = new THREE.MeshPhongMaterial({ color: 0x774411 });
+        const roof = new THREE.Mesh(roofGeometry, roofMaterial);
+        roof.position.y = 8;
+        roof.rotation.y = Math.PI / 4;
+        roof.castShadow = true;
+        scene.add(roof);
+
+        // 动画循环
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 窗口调整
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
