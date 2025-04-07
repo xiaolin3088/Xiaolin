@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>日本木屋模型</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <script>
+        // 初始化场景
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 添加控制器
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        camera.position.set(15, 10, 25);
+        controls.update();
+
+        // 添加光照
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(10, 20, 5);
+        scene.add(directionalLight);
+
+        // 创建地面
+        const groundGeometry = new THREE.PlaneGeometry(50, 50);
+        const groundMaterial = new THREE.MeshPhongMaterial({ 
+            color: 0x88aa88,
+            side: THREE.DoubleSide
+        });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = Math.PI / 2;
+        scene.add(ground);
+
+        // 创建木屋主体
+        function createJapaneseHouse() {
+            const group = new THREE.Group();
+
+            // 建筑底座
+            const base = new THREE.Mesh(
+                new THREE.BoxGeometry(12, 1, 8),
+                new THREE.MeshPhongMaterial({ color: 0x4a3728 })
+            );
+            base.position.y = 0.5;
+            
+            // 主体结构
+            const main = new THREE.Mesh(
+                new THREE.BoxGeometry(10, 5, 6),
+                new THREE.MeshPhongMaterial({ color: 0xdeb887 })
+            );
+            main.position.y = 3;
+            
+            // 日式屋顶
+            const roof = new THREE.Mesh(
+                new THREE.ConeGeometry(7, 4, 4),
+                new THREE.MeshPhongMaterial({ color: 0x444444 })
+            );
+            roof.rotation.y = Math.PI/4;
+            roof.position.set(0, 6.5, 0);
+            
+            // 走廊（缘侧）
+            const engawa = new THREE.Mesh(
+                new THREE.BoxGeometry(12, 0.5, 9),
+                new THREE.MeshPhongMaterial({ color: 0x6b4e3a })
+            );
+            engawa.position.y = 0.75;
+            
+            // 障子门
+            const shoji = new THREE.Mesh(
+                new THREE.PlaneGeometry(3, 4),
+                new THREE.MeshPhongMaterial({ 
+                    color: 0xfffff0,
+                    transparent: true,
+                    opacity: 0.7
+                })
+            );
+            shoji.rotation.y = Math.PI/2;
+            shoji.position.set(-5, 2.5, 0);
+            
+            group.add(base);
+            group.add(main);
+            group.add(roof);
+            group.add(engawa);
+            group.add(shoji);
+            
+            return group;
+        }
+
+        // 添加庭院元素
+        function createGarden() {
+            const group = new THREE.Group();
+            
+            // 石径
+            const path = new THREE.Mesh(
+                new THREE.PlaneGeometry(8, 2),
+                new THREE.MeshPhongMaterial({ color: 0x666666 })
+            );
+            path.rotation.x = Math.PI/2;
+            path.position.set(0, 0.1, -8);
+            
+            // 石灯笼
+            const lantern = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.5, 0.6, 1.5, 6),
+                new THREE.MeshPhongMaterial({ color: 0x888888 })
+            );
+            lantern.position.set(5, 0.75, -5);
+            
+            group.add(path);
+            group.add(lantern);
+            return group;
+        }
+
+        // 添加到场景
+        scene.add(createJapaneseHouse());
+        scene.add(createGarden());
+
+        // 动画循环
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 窗口自适应
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
