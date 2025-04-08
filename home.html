@@ -1,0 +1,176 @@
+<html lang="zh-CN">
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Xiaolin explore</title> 
+  <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .time-section {
+            text-align: right;
+            margin-bottom: 40px;
+        }
+
+        #time {
+            font-size: 4em;
+            font-weight: 300;
+        }
+
+        #date {
+            font-size: 1.5em;
+            opacity: 0.8;
+        }
+
+        .search-box {
+            text-align: center;
+            margin: 80px 0;
+        }
+
+        #search-input {
+            width: 600px;
+            max-width: 90%;
+            padding: 15px 25px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: 0.3s;
+        }
+
+        #search-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+            padding: 0 20px;
+        }
+
+        .link-item {
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        .link-item img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            padding: 10px;
+        }
+
+        .link-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+      
+}
+
+    </style> 
+  <script src="js/jq.js"></script> 
+ </head> 
+ <body id="v1" style="background: url('local-image.jpg') center/cover fixed;"> 
+  <div id="v2" class="container"> 
+   <div id="v3" class="time-section"> 
+    <div id="time">
+     下午10:32:33
+    </div> 
+    <div id="date">
+     2025年4月4日星期五
+    </div> 
+    <h1 id="v19">Xiaolin</h1>
+    <p>注：网址访问请进入InPrivate模式</p>
+   </div> 
+   <div id="v4" class="search-box"> 
+    <form id="v5" action="https://www.bing.com/search" target="_blank"> 
+     <input type="text" id="search-input" name="q" placeholder="搜索网络，回车键搜索..." autofocus=""> 
+    </form> 
+   </div> 
+   <div id="v6" class="quick-links"> 
+    <div id="v7" class="link-item" onclick="window.open('https://github.com')"> 
+     <img id="v8" src="https://github.githubassets.com/favicons/favicon.png" alt="GitHub"> 
+     <div id="v9">
+       GitHub 
+     </div> 
+    </div> 
+    <div id="v10" class="link-item" onclick="window.open('a.html')"> 
+     <img id="v11" src="website.jpg" alt="inPrivate"> 
+     <div id="v12">
+       inPrivate模式浏览 
+     </div> 
+    </div> 
+    <div id="v13" class="link-item" onclick="window.open('https://cn.bing.com/translator/?h_text=msn_ctxt&amp;setlang=zh-cn')"> 
+     <img id="v14" src="https://www.gstatic.com/translate/favicon.ico" alt="翻译"> 
+     <div id="v15">
+       翻译 
+     </div> 
+    </div> 
+    <div id="v16" class="link-item" onclick="window.open('clock.html')"> 
+     <img id="v17" src="https://bpic.588ku.com/audio_copy/cover_img/18/10/09/573e97478c08007ea04bfb88f07755ec.jpg" alt="clock"> 
+     <div id="v18">
+       开启时钟声音
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+  <script>
+        // 时间日期更新
+        function updateTime() {
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            };
+            const dateOptions = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            
+            document.getElementById('time').textContent = 
+                new Date().toLocaleTimeString('zh-CN', timeOptions);
+            
+            document.getElementById('date').textContent = 
+                new Date().toLocaleDateString('zh-CN', dateOptions);
+        }
+
+        // 初始化时间
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // 搜索框快捷键支持
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === '/') {
+                document.getElementById('search-input').focus();
+                e.preventDefault();
+            }
+        });
+    </script>
+ </body>
+</html>
