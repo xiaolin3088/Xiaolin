@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>水塔之家</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 5px;
+            font-family: Arial;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">Xiaolin</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        // 初始化场景
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // 添加控制器
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        camera.position.set(30, 50, 60);
+        controls.update();
+
+        // 光照系统
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(10, 20, 10);
+        directionalLight.castShadow = true;
+        scene.add(directionalLight);
+
+        // 创建地面
+        const groundGeometry = new THREE.PlaneGeometry(100, 100);
+        const groundMaterial = new THREE.MeshPhongMaterial({ 
+            color: 0x88aa88,
+            map: new THREE.TextureLoader().load('https://threejsfundamentals.org/threejs/resources/images/checker.png')
+        });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        // 水塔主体结构
+        function createWaterTower() {
+            const group = new THREE.Group();
+            
+            // 圆柱形塔身
+            const tower = new THREE.Mesh(
+                new THREE.CylinderGeometry(5, 5, 30, 32),
+                new THREE.MeshPhongMaterial({ 
+                    color: 0x888888,
+                    map: new THREE.TextureLoader().load('https://threejsfundamentals.org/threejs/resources/images/brick-diffuse.jpg')
+                })
+            );
+            tower.position.y = 15;
+            tower.castShadow = true;
+
+            // 分层结构（5层）
+            const floors = [];
+            for(let i=0; i<5; i++){
+                const floor = new THREE.Mesh(
+                    new THREE.BoxGeometry(10, 0.3, 10),
+                    new THREE.MeshStandardMaterial({ color: 0x333333 })
+                );
+                floor.position.y = i*6;
+                floor.castShadow = true;
+                floors.push(floor);
+            }
+
+            // 玻璃电梯塔（参考网页7描述的玻璃混凝土电梯塔）
+            const elevator = new THREE.Mesh(
+                new THREE.BoxGeometry(3, 30, 3),
+                new THREE.MeshPhysicalMaterial({
+                    color: 0x9fc0c7,
+                    transparent: true,
+                    opacity: 0.7
+                })
+            );
+            elevator.position.x = 8;
+            elevator.castShadow = true;
+
+            group.add(tower, ...floors, elevator);
+            return group;
+        }
+
+        // 创建屋顶观景平台
+        function createRoofPlatform() {
+            const group = new THREE.Group();
+            
+            // 平台主体
+            const platform = new THREE.Mesh(
+                new THREE.CylinderGeometry(6, 6, 0.5, 32),
+                new THREE.MeshPhongMaterial({ color: 0xcccccc })
+            );
+            platform.position.y = 30;
+            
+            // 玻璃围栏
+            const railing = new THREE.Mesh(
+                new THREE.TorusGeometry(6, 0.3, 16, 100),
+                new THREE.MeshPhysicalMaterial({
+                    color: 0x9fc0c7,
+                    transparent: true,
+                    opacity: 0.7
+                })
+            );
+            railing.rotation.x = Math.PI/2;
+            railing.position.y = 30.3;
+
+            group.add(platform, railing);
+            return group;
+        }
+
+        // 添加建筑主体
+        const waterTower = createWaterTower();
+        const roof = createRoofPlatform();
+        scene.add(waterTower, roof);
+
+        // 添加周边树木（参考网页7描述的周边环境）
+        function createTree() {
+            const tree = new THREE.Group();
+            const trunk = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.5, 0.5, 5, 8),
+                new THREE.MeshPhongMaterial({ color: 0x664422 })
+            );
+            const leaves = new THREE.Mesh(
+                new THREE.SphereGeometry(3),
+                new THREE.MeshPhongMaterial({ color: 0x228833 })
+            );
+            leaves.position.y = 4;
+            tree.add(trunk, leaves);
+            return tree;
+        }
+
+        for(let i=0; i<20; i++){
+            const tree = createTree();
+            tree.position.x = (Math.random()-0.5)*80;
+            tree.position.z = (Math.random()-0.5)*80;
+            scene.add(tree);
+        }
+
+        // 动画循环
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 窗口响应
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
