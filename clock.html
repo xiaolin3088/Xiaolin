@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>每秒报时时钟</title>
+</head>
+<body style="background: url('local-image.jpg') center/cover fixed;">
+    <!-- 音频元素（需要准备一个1秒的提示音文件） -->
+    <audio id="tickSound">
+        <source src="d.mp3" type="audio/mpeg">
+        clock
+    </audio>
+
+    <script>
+        // 获取音频元素
+        const tickSound = document.getElementById('tickSound');
+        
+        // 设置定时器
+        function startClock() {
+            // 立即播放第一次提示
+            tickSound.play();
+            
+            // 每秒重复播放
+            setInterval(() => {
+                tickSound.currentTime = 0; // 重置播放位置
+                tickSound.play();
+            }, 1000);
+        }
+
+        // 添加点击事件监听器以解决浏览器自动播放限制
+        document.addEventListener('click', function() {
+            startClock();
+            // 移除事件监听器（只需一次点击）
+            document.removeEventListener('click', arguments.callee);
+        });
+      // 时间日期更新
+        function updateTime() {
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            };
+            const dateOptions = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            
+            document.getElementById('time').textContent = 
+                new Date().toLocaleTimeString('zh-CN', timeOptions);
+            
+            document.getElementById('date').textContent = 
+                new Date().toLocaleDateString('zh-CN', dateOptions);
+        }
+
+        // 初始化时间
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+    <style>
+    * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .time-section {
+            text-align: right;
+            margin-bottom: 40px;
+        }
+
+        #time {
+            font-size: 4em;
+            font-weight: 300;
+        }
+
+        #date {
+            font-size: 1.5em;
+            opacity: 0.8;
+        }
+
+        .search-box {
+            text-align: center;
+            margin: 80px 0;
+        }
+    </style>
+
+    <div style="margin: 20px; text-align: center;">
+        <h1>点击当前页面开始时钟</h1>
+       <div id="v2" class="container"> 
+   <div id="v3" class="time-section"> 
+    <div id="time">
+     下午10:32:33
+    </div> 
+    <div id="date">
+     2025年4月4日星期五
+    </div> 
+    <h1 id="v19">Xiaolin</h1>
+        
+    </div>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网址访问</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: url('c.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            backdrop-filter: blur(2px);
+        }
+
+        .search-box {
+            text-align: center;
+            margin: 100px 0;
+            position: relative;
+        }
+
+        #search-input {
+            width: 600px;
+            max-width: 90%;
+            padding: 15px 25px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #search-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .search-hint {
+            margin-top: 10px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+<a href="index.html">返回主页</a>
+    <div class="container">
+        <div class="search-box">
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="输入网址或搜索内容..."
+                autofocus
+            >
+            <div class="search-hint">
+     
+    <script>
+        const searchInput = document.getElementById('search-input');
+        
+        // 智能判断输入内容
+        function isUrl(text) {
+            // 检测常见URL特征
+            return text.match(/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/i) || 
+                   text.match(/^[\w-]+\.[\w-]+(\/.*)?$/i);
+        }
+
+        // 处理搜索/访问
+        function handleSearch() {
+            const query = searchInput.value.trim();
+            
+            if (!query) return;
+            
+            let url;
+            if (isUrl(query)) {
+                // 自动补全http协议
+                url = query.startsWith('http') ? query : `https://${query}`;
+            } else {
+                // 必应搜索
+                url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+            }
+            
+            window.open(url, '_blank');
+            searchInput.value = ''; // 清空输入框
+        }
+
+        // 回车触发
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        });
+
+        // 快捷键聚焦搜索框
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === '/') {
+                searchInput.focus();
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
