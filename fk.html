@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>俄罗斯方块</title>
+    <style>
+        body {
+            background: #202028;
+            color: #fff;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            border: 2px solid #fff;
+            margin-bottom: 20px;
+        }
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 240px;
+        }
+        .control-btn {
+            padding: 15px;
+            font-size: 18px;
+            background: #4CAF50;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+        .control-btn:active {
+            background: #45a049;
+        }
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            width: 240px;
+            margin-bottom: 15px;
+        }
+        #score {
+            color: #FFD700;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="info-panel">
+            <div>得分: <span id="score">0</span></div>
+        </div>
+        <canvas id="tetris" width="240" height="400"></canvas>
+        <div class="control-panel">
+            <button class="control-btn" id="left">←</button>
+            <button class="control-btn" id="rotate">↻</button>
+            <button class="control-btn" id="right">→</button>
+            <button class="control-btn" id="down" style="grid-column: 1 / 4;">↓ 加速</button>
+        </div>
+    </div>
+
+<script>
+const canvas = document.getElementById('tetris');
+const context = canvas.getContext('2d');
+const scoreElement = document.getElementById('score');
+
+context.scale(20, 20);
+
+// 游戏配置
+const SHAPES = [
+    [[1, 1, 1, 1]], // I
+    [[1, 1], [1, 1]], // O
+    [[1, 1, 1], [0, 1, 0]], // T
+    [[1, 1, 1], [1, 0, 0]], // L
+    [[1, 1, 1], [0, 0, 1]], // J
+    [[1, 1, 0], [0, 1, 1]], // S
+    [[0, 1, 1], [1, 1, 0]]  // Z
+];
+
+const COLORS = [
+    null, '#FF0D72', '#0DC2FF', '#0DFF72',
+    '#F538FF', '#FF8E0D', '#FFE138', '#3877FF'
+];
+
+// 游戏状态
+let dropCounter = 0;
+let dropInterval = 1000;
+let lastTime = 0;
+let score = 0;
+let paused = false;
+const matrix = createMatrix(12, 20);
+const player = {
+    pos: {x: 0, y: 0},
+    matrix: null,
+    score: 0
+};
+
+// 游戏核心逻辑
+function createMatrix(w, h) {
+    return Array(h).fill().map(() => Array(w).fill(0));
+}
+
+function createPiece() {
+    return SHAPES[Math.floor(Math.random() * 7)];
+}
+
+function draw() {
+    context.fillStyle = '#000';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    drawMatrix(matrix, {x: 0, y: 0});
+    drawMatrix(player.matrix, player.pos);
+}
+
+function drawMatrix(matrix, offset) {
+    matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value) {
+                context.fillStyle = COLORS[value];
+                context.fillRect(x + offset.x, y + offset.y, 1, 1);
+            }
+        });
+    });
+}
+
+function collide(matrix, player) {
+    const [m, o] = [player.matrix, player.pos];
+    for (let y = 0; y < m.length; y++) {
+        for (let x = 0; x < m[y].length; x++) {
+            if (m[y][x] && (matrix[y + o.y]?.[x + o.x] ?? 1)) return true;
+        }
+    }
+    return false;
+}
+
+function merge() {
+    player.matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value) matrix[y + player.pos.y][x + player.pos.x] = value;
+        });
+    });
+}
+
+function rotate(matrix) {
+    return matrix[0].map((_, i) => 
+        matrix.map(row => row[i]).reverse()
+    );
+}
+
+function sweep() {
+    let rows = 0;
+    outer: for (let y = matrix.length - 1; y > 0; y--) {
+        for (const cell of matrix[y]) {
+            if (!cell) continue outer;
+        }
+        matrix.splice(y, 1);
+        matrix.unshift(Array(12).fill(0));
+        rows++;
+        y++;
+    }
+    return rows;
+}
+
+// 控制逻辑
+function move(dir) {
+    player.pos.x += dir;
+    if (collide(matrix, player)) player.pos.x -= dir;
+    draw();
+}
+
+function rotatePiece() {
+    const pos = player.pos.x;
+    let offset = 1;
+    const matrix = rotate(player.matrix);
+    player.matrix = matrix;
+    while (collide(matrix, player)) {
+        player.pos.x += offset;
+        offset = -(offset + (offset > 0 ? 1 : -1));
+        if (offset > matrix[0].length) {
+            player.matrix = rotate(matrix);
+            player.pos.x = pos;
+            return;
+        }
+    }
+    draw();
+}
+
+function drop() {
+    player.pos.y++;
+    if (collide(matrix, player)) {
+        player.pos.y--;
+        merge();
+        playerReset();
+        score += sweep() * 100;
+        scoreElement.textContent = score;
+    }
+    dropCounter = 0;
+    draw();
+}
+
+function playerReset() {
+    player.matrix = createPiece();
+    player.pos.y = 0;
+    player.pos.x = Math.floor(matrix[0].length / 2 - 
+                     player.matrix[0].length / 2);
+    if (collide(matrix, player)) {
+        alert(`游戏结束! 得分: ${score}`);
+        matrix.forEach(row => row.fill(0));
+        score = 0;
+        scoreElement.textContent = 0;
+    }
+}
+
+// 事件绑定
+document.getElementById('left').addEventListener('touchstart', e => {
+    e.preventDefault();
+    move(-1);
+});
+document.getElementById('right').addEventListener('touchstart', e => {
+    e.preventDefault();
+    move(1);
+});
+document.getElementById('rotate').addEventListener('touchstart', e => {
+    e.preventDefault();
+    rotatePiece();
+});
+document.getElementById('down').addEventListener('touchstart', e => {
+    e.preventDefault();
+    drop();
+});
+
+// 鼠标/桌面支持
+document.getElementById('left').addEventListener('mousedown', () => move(-1));
+document.getElementById('right').addEventListener('mousedown', () => move(1));
+document.getElementById('rotate').addEventListener('mousedown', rotatePiece);
+document.getElementById('down').addEventListener('mousedown', drop);
+
+// 游戏循环
+function update(time = 0) {
+    const deltaTime = time - lastTime;
+    lastTime = time;
+    dropCounter += deltaTime;
+    
+    if (dropCounter > dropInterval) {
+        drop();
+    }
+    
+    requestAnimationFrame(update);
+}
+
+// 初始化
+playerReset();
+update();
+</script>
+</body>
+</html>
