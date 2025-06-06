@@ -1,178 +1,406 @@
+<!DOCTYPE html>
 <html lang="zh-CN">
- <head> 
-  <meta charset="UTF-8"> 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <title>XE TERMINAL EXPLORE</title> 
-  <style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>华为MateBook视频背景主页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
-
+        
         body {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            min-height: 100vh;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
             color: white;
-            padding: 20px;
+            background: #000;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
         }
-
+        
+        #background-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: brightness(0.8);
+        }
+        
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(20, 20, 60, 0.5) 100%);
+            z-index: 0;
+        }
+        
+        .content {
+            text-align: center;
+            padding: 30px;
+            max-width: 1000px;
+            z-index: 1;
+            width: 90%;
+        }
+        
         .time-section {
-            text-align: right;
             margin-bottom: 40px;
         }
-
-        #time {
-            font-size: 4em;
+        
+        .time {
+            font-size: 6rem;
             font-weight: 300;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
         }
-
-        #date {
-            font-size: 1.5em;
-            opacity: 0.8;
+        
+        .date {
+            font-size: 1.5rem;
+            font-weight: 300;
+            opacity: 0.9;
         }
-
+        
+        .search-container {
+            margin: 40px auto;
+            max-width: 700px;
+            position: relative;
+        }
+        
         .search-box {
-            text-align: center;
-            margin: 80px 0;
+            width: 100%;
+            padding: 18px 70px 18px 25px;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(10, 20, 40, 0.4);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
-
-        #search-input {
-            width: 600px;
-            max-width: 90%;
-            padding: 15px 25px;
-            font-size: 1.2em;
-            border: none;
-            border-radius: 30px;
-            background: rgba(255, 255, 255, 0.9);
-            transition: 0.3s;
-        }
-
-        #search-input:focus {
+        
+        .search-box:focus {
             outline: none;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            border-color: rgba(0, 150, 255, 0.8);
+            background: rgba(10, 30, 60, 0.5);
+            box-shadow: 0 0 20px rgba(0, 150, 255, 0.4);
         }
-
+        
+        .search-icon {
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .search-icon:hover {
+            color: #00bfff;
+        }
+        
         .quick-links {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 30px;
-            margin-top: 60px;
-            padding: 0 20px;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 50px auto;
         }
-
+        
         .link-item {
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-            padding: 15px;
             background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             border-radius: 15px;
+            padding: 20px 10px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
         }
-
-        .link-item img {
+        
+        .link-item:hover {
+            transform: translateY(-10px);
+            background: rgba(0, 100, 255, 0.2);
+            border-color: rgba(0, 150, 255, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .link-icon {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: #00bfff;
+        }
+        
+        .link-title {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .brand {
+            position: absolute;
+            top: 30px;
+            left: 40px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+        }
+        
+        .brand span {
+            color: #00bfff;
+        }
+        
+        .settings {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            z-index: 10;
+        }
+        
+        .settings-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
             width: 50px;
             height: 50px;
-            margin-bottom: 10px;
             border-radius: 50%;
-            padding: 10px;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
         }
-
-        .link-item:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.2);
+        
+        .settings-btn:hover {
+            background: rgba(0, 100, 255, 0.3);
+            transform: rotate(90deg);
         }
-      
-}
-
-    </style> 
-  <script src="https://xiaolin3088.github.io/Xiaolin/jq.js"></script> 
- </head> 
- <body id="v1" style="background: url('https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/launch/250519/harmonyos-computer/shelf/matebook-fold-ultimate-design.mp4') center/cover fixed;"> 
-  <div id="v2" class="container"> 
-   <div id="v3" class="time-section"> 
-    <div id="time">
-     下午10:32:33
-    </div> 
-    <div id="date">
-     2025年4月4日星期五
-    </div> 
-    <h1 id="v19">Xiaolin</h1>
-    <p>网页版</p>
-    <p>注：网址访问请进入InPrivate模式</p>
-    <a href="https://xiaolin3088.github.io/Xiaolin/pan.html">前往下载我的Android app</a>
-   </div> 
-   <div id="v4" class="search-box"> 
-    <form id="v5" action="https://www.bing.com/search" target="_blank"> 
-     <input type="text" id="search-input" name="q" placeholder="搜索网络，回车键搜索..." autofocus=""> 
-    </form> 
-   </div> 
-   <div id="v6" class="quick-links"> 
-    <div id="v7" class="link-item" onclick="window.open('https://github.com')"> 
-     <img id="v8" src="https://github.githubassets.com/favicons/favicon.png" alt="GitHub"> 
-     <div id="v9">
-       GitHub 
-     </div> 
-    </div> 
-    <div id="v10" class="link-item" onclick="window.open('https://xiaolin3088.github.io/Xiaolin/a.html')"> 
-     <img id="v11" src="https://xiaolin3088.github.io/Xiaolin/website.jpg" alt="inPrivate"> 
-     <div id="v12">
-       inPrivate模式浏览 
-     </div> 
-    </div> 
-    <div id="v13" class="link-item" onclick="window.open('https://cn.bing.com/translator/?h_text=msn_ctxt&amp;setlang=zh-cn')"> 
-     <img id="v14" src="https://www.gstatic.com/translate/favicon.ico" alt="翻译"> 
-     <div id="v15">
-       翻译 
-     </div> 
-    </div> 
-    <div id="v16" class="link-item" onclick="window.open('https://xiaolin3088.github.io/Xiaolin/clock.html')"> 
-     <img id="v17" src="https://bpic.588ku.com/audio_copy/cover_img/18/10/09/573e97478c08007ea04bfb88f07755ec.jpg" alt="clock"> 
-     <div id="v18">
-       开启时钟声音
-     </div> 
-    </div> 
-   </div> 
-  </div> 
-  <script>
-        // 时间日期更新
+        
+        .quote {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-style: italic;
+            font-size: 1.1rem;
+            opacity: 0.8;
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .time { font-size: 4rem; }
+            .date { font-size: 1.2rem; }
+            .search-box { padding: 15px 60px 15px 20px; font-size: 1rem; }
+            .quick-links { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; }
+            .link-item { padding: 15px 8px; }
+            .link-icon { font-size: 1.8rem; }
+            .brand { top: 20px; left: 20px; font-size: 1.5rem; }
+            .settings { top: 20px; right: 20px; }
+        }
+        
+        @media (max-width: 480px) {
+            .time { font-size: 3rem; }
+            .date { font-size: 1rem; }
+            .quick-links { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .link-item { padding: 12px 5px; }
+            .link-icon { font-size: 1.5rem; margin-bottom: 10px; }
+            .link-title { font-size: 0.85rem; }
+            .brand { font-size: 1.2rem; }
+            .quote { font-size: 0.9rem; bottom: 20px; }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .time-section, .search-container, .quick-links {
+            animation: fadeIn 1s ease-out forwards;
+        }
+        
+        .time-section { animation-delay: 0.2s; }
+        .search-container { animation-delay: 0.4s; }
+        .quick-links { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- 视频背景容器 -->
+    <div class="video-container">
+        <video id="background-video" autoplay loop muted playsinline>
+            <source src="https://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/launch/250519/harmonyos-computer/shelf/matebook-fold-ultimate-design.mp4" type="video/mp4">
+            您的浏览器不支持视频标签。
+        </video>
+    </div>
+    
+    <!-- 渐变遮罩层 -->
+    <div class="overlay"></div>
+    
+    <!-- 左上角品牌标识 -->
+    <div class="brand">
+        <i class="fas fa-infinity"></i>
+        <div>XE<span>Terminal</span></div>
+    </div>
+    
+    <!-- 右上角设置按钮 -->
+    <div class="settings">
+        <button class="settings-btn">
+            <i class="fas fa-cog"></i>
+        </button>
+    </div>
+    
+    <!-- 主要内容区域 -->
+    <div class="content">
+        <!-- 时间日期 -->
+        <div class="time-section">
+            <div class="time" id="current-time">00:00:00</div>
+            <div class="date" id="current-date">2023年1月1日 星期一</div>
+        </div>
+        
+        <!-- 搜索框 -->
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="搜索网页或输入网址...">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+        
+        <!-- 快速链接 -->
+        <div class="quick-links">
+            <div class="link-item">
+                <div class="link-icon"><i class="fab fa-google"></i></div>
+                <div class="link-title">谷歌搜索</div>
+            </div>
+            <div class="link-item">
+                <div class="link-icon"><i class="fab fa-youtube"></i></div>
+                <div class="link-title">YouTube</div>
+            </div>
+            <div class="link-item">
+                <div class="link-icon"><i class="fab fa-github"></i></div>
+                <div class="link-title">GitHub</div>
+            </div>
+            <div class="link-item">
+                <div class="link-icon"><i class="fab fa-twitter"></i></div>
+                <div class="link-title">Twitter</div>
+            </div>
+            <div class="link-item">
+                <div class="link-icon"><i class="fas fa-envelope"></i></div>
+                <div class="link-title">Gmail</div>
+            </div>
+            <div class="link-item">
+                <div class="link-icon"><i class="fas fa-cloud"></i></div>
+                <div class="link-title">云存储</div>
+            </div>
+            <div class="link-item">
+                <div class="link-icon"><i class="fas fa-music"></i></div>
+                <div class="link-title">音乐</div>
+            </div>
+            <div class="link-item">
+                <div class="link-icon"><i class="fas fa-video"></i></div>
+                <div class="link-title">视频</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部名言 -->
+    <div class="quote">
+        "创新是引领发展的第一动力" - 华为
+    </div>
+    
+    <script>
+        // 更新时间函数
         function updateTime() {
-            const timeOptions = { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
-            };
-            const dateOptions = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            };
+            const now = new Date();
             
-            document.getElementById('time').textContent = 
-                new Date().toLocaleTimeString('zh-CN', timeOptions);
+            // 更新时间
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
             
-            document.getElementById('date').textContent = 
-                new Date().toLocaleDateString('zh-CN', dateOptions);
+            // 更新日期
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const weekDay = weekDays[now.getDay()];
+            document.getElementById('current-date').textContent = `${year}年${month}月${day}日 ${weekDay}`;
         }
-
-        // 初始化时间
-        setInterval(updateTime, 1000);
+        
+        // 初始调用并每秒更新
         updateTime();
-
-        // 搜索框快捷键支持
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === '/') {
-                document.getElementById('search-input').focus();
-                e.preventDefault();
+        setInterval(updateTime, 1000);
+        
+        // 搜索功能
+        const searchBox = document.querySelector('.search-box');
+        const searchIcon = document.querySelector('.search-icon');
+        
+        searchBox.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
             }
         });
+        
+        searchIcon.addEventListener('click', performSearch);
+        
+        function performSearch() {
+            const query = searchBox.value.trim();
+            if (query) {
+                // 简单的搜索处理 - 实际应用中应使用搜索引擎
+                if (query.startsWith('http://') || query.startsWith('https://')) {
+                    window.location.href = query;
+                } else if (query.includes('.') && !query.includes(' ')) {
+                    window.location.href = 'http://' + query;
+                } else {
+                    window.location.href = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+                }
+            }
+        }
+        
+        // 为快速链接添加点击事件
+        const links = document.querySelectorAll('.link-item');
+        const linkUrls = [
+            'https://www.google.com',
+            'https://www.youtube.com',
+            'https://www.github.com',
+            'https://www.twitter.com',
+            'https://mail.google.com',
+            'https://drive.google.com',
+            'https://music.youtube.com',
+            'https://www.netflix.com'
+        ];
+        
+        links.forEach((link, index) => {
+            link.addEventListener('click', () => {
+                window.location.href = linkUrls[index];
+            });
+        });
     </script>
- </body>
+</body>
 </html>
